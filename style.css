@@ -1,0 +1,32 @@
+h1{
+  text-align: center;
+  margin: 30px 0;
+}
+
+.tomato{
+  background-color: tomato;
+}
+
+.blue {
+  background-color: blueviolet;
+}
+
+.img-box{
+  overflow: hidden;
+}
+
+.caixa{
+  width: 200px;
+  height: 200px;
+  margin: 2px auto;
+}
+
+.situacao-sw{
+  text-align: center;
+  font-size: 1.5rem;
+  
+}
+
+.situacao-sw > p > span{
+  font-weight: bold;
+}

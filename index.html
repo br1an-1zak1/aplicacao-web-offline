@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service workers</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <h1>Experimento com ciclo de vida do Service Worker</h1>
+  <div class="caixa blue"></div>
+  <div class="caixa img-box">
+    <img src="./img/lontra.jpg" alt="lontra">
+  </div>
+  <div class="caixa tomato"></div>
+
+  <div class="situacao-sw">
+    <p> ciclo de registro: <span id="estado"></span></p>
+  </div>
+
+
+  <script>
+
+    // ciclo de vida do serviceWorker
+    // 1 - registrar ele apontando para o arquivo que vai ficar em background
+    // 2 - buscar por registros    
+
+    const estado = document.querySelector('#estado');
+
+    // ciclo de vida: REGISTRO
+    navigator.serviceWorker.register('./serviceWorker.js')
+      .then((register) => {
+        console.log('registrado');
+        estado.innerHTML = 'registrado';
+      })
+      .catch((error) => {
+        console.log('erro: ', error);
+        estado.innerHTML = 'erro ao registrar';
+      });
+  </script>
+</body>
+
+</html>
