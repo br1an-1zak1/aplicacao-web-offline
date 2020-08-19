@@ -13,32 +13,77 @@
   <div class="caixa blue"></div>
   <div class="caixa img-box">
     <img src="./img/lontra.jpg" alt="lontra">
+    <!-- <img src="./img/dr-evil.gif" alt="lontra"> -->
   </div>
   <div class="caixa tomato"></div>
 
   <div class="situacao-sw">
     <p> ciclo de registro: <span id="estado"></span></p>
+    <!-- 
+      O botão serve para atualizar o SW depreciado e carregar o novo que está esperando.
+      Isso faz com que reinicie o ciclo do SW. Assim, não é necessário fechar a "janela"
+        do site e voltar, para atualizar o SW.
+    -->
+    <button id="atualizar">Atualizar SW</button>
   </div>
-
 
   <script>
 
-    // ciclo de vida do serviceWorker
-    // 1 - registrar ele apontando para o arquivo que vai ficar em background
-    // 2 - buscar por registros    
-
     const estado = document.querySelector('#estado');
+    const atualizar = document.querySelector('#atualizar');
+
+    function chamadaSW(worker) {
+      atualizar.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        // "postMessage" é a maneira de comunicação entre a página e o SW
+        // no SW ele é recebido como evento de 'message' (no addEventListener)
+        worker.postMessage({ action: 'skipWaiting' })
+      })
+    }
 
     // ciclo de vida: REGISTRO
     navigator.serviceWorker.register('./serviceWorker.js')
       .then((register) => {
-        console.log('registrado');
+
+        //console.log('hasSW', navigator.serviceWorker.controller)
+
+        if (!navigator.serviceWorker.controller) {
+          console.log('Carregamento sem SW');
+          estado.innerHTML = 'Carregamento sem SW';
+          return;
+        }
+
+        if (register.waiting) {
+          console.log('tem um SW na espera');
+          estado.innerHTML = 'SW em espera';
+          chamadaSW(register.waiting);
+          return;
+        }
+
+        if (register.installing) {
+          // register.installing.addEventListener('statechange', () => {
+          //   if (register.installing.state == 'installed'){
+          //     console.log('SW Instalado');
+          //   }
+          // })
+          console.log('o SW está instalando...');
+          return;
+        }
+
+        console.log('SW registrado');
         estado.innerHTML = 'registrado';
       })
       .catch((error) => {
         console.log('erro: ', error);
-        estado.innerHTML = 'erro ao registrar';
+        estado.innerHTML = 'erro ao registrar SW';
       });
+
+    // controller se refere ao arquivo de SW, logo, se o SW é alterado o evento executa
+    navigator.serviceWorker.addEventListener('controllerchange', (event) => {
+      window.location.reload();
+    })
+
   </script>
 </body>
 

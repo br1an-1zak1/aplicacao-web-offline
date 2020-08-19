@@ -1,10 +1,10 @@
-const staticCacheTeste = "teste-1";
+const staticCacheTeste = "teste-3";
 
-// Ciclo de vida: INSTALAÇÃO (momento para "baixar" arquivos na primeira vez do SW)
+// Ciclo de vida: INSTALAÇÃO (momento para salvar arquivos no navegador)
 self.addEventListener("install", (event) => {
   // aqui é o momento de armazenar em cache os arquivos
 
-  const urlsToCache = ["/", "img/lontra.jpg", "style.css"];
+  const urlsToCache = ["/", "img/lontra.jpg", "img/dr-evil.gif", "style.css"];
 
   // sinaliza o progresso da instalação
   event.waitUntil(
@@ -17,21 +17,21 @@ self.addEventListener("install", (event) => {
 
 // Ciclo de vida: ATIVAÇÂO (ocorre quando o SW se torna ativo
 //    e o SW anterior está ausente)
+// momento bom para retirar os caches antigos
 self.addEventListener("activate", (event) => {
-  // momento bom para retirar os caches antigos
 
   // tem significado de "espere até"
   event.waitUntil(
     // caches.delete('teste-1') // forma fácil porem não é escalável
 
-    // ✅ busca todos os caches e retorna em promisse
+    // ✅ "keys()" busca todos os caches e retorna em promisse
     //      o resultado da promisse é um array com todos os nomes de cache no navegador
-    // ✅ filter separa os caches com nome iniciando "teste-"
+    // ✅ "filter" separa os caches com nome iniciando "teste-"
     //      e que seja diferente do cache atual
-    // ✅ o map percorre cada o array criado no filter
+    // ✅ "map" percorre cada o array criado no filter
     //      assim deletando todos os nomes de caches "obsoletos"
     //      e retornando uma promisse
-    // ✅ "Promise.all" vai esperar todas as promisses que retornam do "map"
+    // ✅ "Promise.all()" vai esperar todas as promisses que retornam do "map"
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
@@ -64,7 +64,7 @@ self.addEventListener("fetch", (event) => {
   );
 
   /*
-  // ✅ diz ao navegador que a gente que vai cuidar da requisição 
+  // ✅ "respondWith" diz ao navegador que a gente que vai cuidar da requisição 
   event.respondWith(
     // o primeiro parametro é o corpo da resposta e o segundo os cabeçalhos
     // retorna uma pagina html com "teste response"
@@ -77,7 +77,7 @@ self.addEventListener("fetch", (event) => {
   */
 
   /*
-  // ✅ recupera uma imagem e personaliza a resposta 404
+  // recupera uma imagem e personaliza a resposta 404
   event.respondWith(
     fetch('index.html')
       .then((res) => {
@@ -93,3 +93,16 @@ self.addEventListener("fetch", (event) => {
   )
   */
 });
+
+
+self.addEventListener('message', (event) => {
+  console.log(event.data.action)
+  if (event.data.action == 'skipWaiting'){
+    // pode ser chamado enquanto esta nas fases: 
+    // - installation
+    // - waiting
+    // ele dita que não deve ficar atrás do SW desatualizado, 
+    // ele deve tomar o lugar do velho IMEDIATAMENTE!
+    self.skipWaiting();
+  }
+})
