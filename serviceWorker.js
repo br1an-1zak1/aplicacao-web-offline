@@ -94,7 +94,7 @@ self.addEventListener("fetch", (event) => {
   */
 });
 
-
+// evento que recebe os dados da página quando algo é passado
 self.addEventListener('message', (event) => {
   console.log(event.data.action)
   if (event.data.action == 'skipWaiting'){
