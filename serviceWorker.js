@@ -48,14 +48,18 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// ciclo de vida: BUSCA (busca de arquivos novos a cada atualização da página)
+// ciclo de vida: BUSCA (intercepta as requisições feitas ao servidor verificando se tem no cache, caso não, prosegue com a requisição)
 self.addEventListener("fetch", (event) => {
   // busca por requisições no cache
+
+  // ✅ "respondWith" diz ao navegador que a gente que vai retornar a resposta.
   event.respondWith(
     caches
       .match(event.request)
       .then((response) => {
+        // se o arquivo tiver em cache retorna ele
         if (response) return response;
+        // caso o arquivo não tenha no cache é buscado ele no servidor
         return fetch(event.request);
       })
       .catch((error) => {
@@ -64,7 +68,6 @@ self.addEventListener("fetch", (event) => {
   );
 
   /*
-  // ✅ "respondWith" diz ao navegador que a gente que vai cuidar da requisição 
   event.respondWith(
     // o primeiro parametro é o corpo da resposta e o segundo os cabeçalhos
     // retorna uma pagina html com "teste response"
